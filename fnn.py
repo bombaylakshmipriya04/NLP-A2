@@ -209,11 +209,19 @@ if __name__ == "__main__":
     results = []
 
     model.eval()
+    correct, total =0,0
     with torch.no_grad():
-        for input_vector, _ in test_data:  # Unpacking the tuple
+        for input_vector, gold_label in test_data:  # Unpacking the tuple
             predicted_vector = model(input_vector)
             predicted_label = torch.argmax(predicted_vector).item()
             results.append(predicted_label)
+            # Calculate accuracy
+            correct += int(predicted_label == gold_label)
+            total += 1
+            
+    # Calculate and print test accuracy
+    test_accuracy = correct / total if total > 0 else 0
+    print(f"Test Accuracy: {test_accuracy:.4f}")
 
     # Save results to CSV
     df = pd.DataFrame({"id": np.arange(len(results)), "stars": results})
